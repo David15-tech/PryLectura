@@ -23,7 +23,7 @@ public class Contenedor {
     
     //var global para
     AgentContainer agentContainer;
-    GUIpry gui;
+    GUIpry gui = new GUIpry();
     public void contenedor (){
         //rutina en tiempo de ejecucion
         jade.core.Runtime runtime = jade.core.Runtime.instance(); //contenedor en tiempio de ejecucion
@@ -32,7 +32,7 @@ public class Contenedor {
         agentContainer =runtime.createMainContainer(p);//configuracion del perfil de contenedor
         //solo se puede usar un solo puerto en cada ejecucion
         
-        
+        gui.setVisible(true);
         //CONTENEDOR PRINCIPAL QUE INICIA ANTES DE Nada
         //y ahora agregamos agentes
         agregarAgentes();

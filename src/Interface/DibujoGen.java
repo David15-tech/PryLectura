@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package proyectoai_2022a;
+package Interface;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -13,7 +13,11 @@ import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Locale;
+import javax.imageio.ImageIO;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
@@ -32,17 +36,26 @@ public class DibujoGen extends JPanel{
         init();
     }
     
+    public BufferedImage getImage(){
+        return img;
+    }
     public void init(){
-        setBackground(Color.BLACK);
+        setBackground(Color.WHITE);
         
-        img = new BufferedImage(640, 480, BufferedImage.TYPE_INT_RGB);
+        img = new BufferedImage(400, 200, BufferedImage.TYPE_INT_BGR);
         g2d = img.createGraphics();//instancia de imagenes
-        g2d.setColor(Color.GREEN);
+        g2d.setBackground(Color.WHITE);
+        g2d.clearRect(0, 0, 400, 200);
+        g2d.setColor(Color.BLACK);
+        
+        //ggd.drawLine(100, 5, 5, 200);
+        //ggd.fillRect(50, 50, 100, 100);
         g2d.setStroke(new BasicStroke(2));//lineas algo mas gruesas
         
         //para usar el raton
         
-        MouseAdapter mauseHandler = new MouseAdapter() {
+        MouseAdapter mauseHandler;
+        mauseHandler = new MouseAdapter() {
             
             
             private Point curPoint = new Point();
@@ -54,9 +67,14 @@ public class DibujoGen extends JPanel{
 
             @Override
             public void mouseDragged(MouseEvent e) {//cuando  movemos el raton y segimos presionando el raton
-                g2d.drawLine(curPoint.x, curPoint.y, e.getX(), e.getY());//actializa en donde se encuntra el raton
+                g2d.drawLine(curPoint.x, curPoint.y, e.getX(), e.getY());//acualiza en donde se encuntra el raton
                 curPoint.setLocation(e.getPoint());//iguala la posicion final
                 repaint();//requerimos el metodo paintComponer
+                try {
+                    ImageIO.write(img, "jpg", new File("foto1.jpg"));
+                } catch (IOException ev) {
+                    System.out.println("Error de escritura");
+                }
             }
             
             
@@ -72,7 +90,18 @@ public class DibujoGen extends JPanel{
         g.drawImage(img, 0, 0, null);
     }
     
-    
+    public void iniciar(){
+        
+        SwingUtilities.invokeLater(() -> {
+            JFrame frame = new JFrame("DibujoGen");
+            frame.setMinimumSize(new Dimension(400, 200));
+            frame.setResizable(false);
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.setContentPane(new DibujoGen());
+            frame.setLocationRelativeTo(null);//centrar la ventana
+            frame.setVisible(true);//mostrar la interface            
+        });
+    }
     
     public static void main(String[] args){
         
