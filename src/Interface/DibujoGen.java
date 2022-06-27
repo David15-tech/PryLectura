@@ -4,6 +4,7 @@
  */
 package Interface;
 
+import static com.sun.java.accessibility.util.AWTEventMonitor.addWindowListener;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -12,6 +13,8 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +22,7 @@ import java.util.Locale;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -27,12 +31,14 @@ import javax.swing.SwingUtilities;
  * @author davpa
  */
 public class DibujoGen extends JPanel{
-    
+    GUIpry gui;
     BufferedImage img;//aqui se almacena todo lo que se hace con g2d
     Graphics2D g2d;
+    JFrame frame;
     
-    public DibujoGen(){
+    public DibujoGen(GUIpry gui){
         super();
+        this.gui = gui;
         init();
     }
     
@@ -70,11 +76,8 @@ public class DibujoGen extends JPanel{
                 g2d.drawLine(curPoint.x, curPoint.y, e.getX(), e.getY());//acualiza en donde se encuntra el raton
                 curPoint.setLocation(e.getPoint());//iguala la posicion final
                 repaint();//requerimos el metodo paintComponer
-                try {
-                    ImageIO.write(img, "jpg", new File("foto1.jpg"));
-                } catch (IOException ev) {
-                    System.out.println("Error de escritura");
-                }
+                gui.setImage(img);
+                //ImageIO.write(img, "jpg", new File("foto1.jpg"));
             }
             
             
@@ -82,6 +85,7 @@ public class DibujoGen extends JPanel{
         };
         addMouseListener(mauseHandler);//invoca al metodo mousePress
         addMouseMotionListener(mauseHandler);//invoca a mouseDragged
+        frame = new JFrame("DibujoGen");
     }
 
     @Override
@@ -89,20 +93,25 @@ public class DibujoGen extends JPanel{
         super.paintComponent(g);//se dibuje el color de fondo
         g.drawImage(img, 0, 0, null);
     }
-    
-    public void iniciar(){
+    public void iniciar(GUIpry gui){
         
         SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("DibujoGen");
+            //JFrame frame = new JFrame("DibujoGen");
             frame.setMinimumSize(new Dimension(400, 200));
             frame.setResizable(false);
-            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            frame.setContentPane(new DibujoGen());
+            //frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.addWindowListener(new WindowAdapter() {
+                public void windowClosing(WindowEvent e){
+                    //JOptionPane.showMessageDialog(frame, "HEY", "HEY", HEIGHT);
+                    gui.cargarPanel();
+                }
+            });
+            frame.setContentPane(new DibujoGen(gui));
             frame.setLocationRelativeTo(null);//centrar la ventana
             frame.setVisible(true);//mostrar la interface            
         });
     }
-    
+    /*
     public static void main(String[] args){
         
 
@@ -116,5 +125,5 @@ public class DibujoGen extends JPanel{
             frame.setLocationRelativeTo(null);//centrar la ventana
             frame.setVisible(true);//mostrar la interface
         });
-    }
+    }*/
 }
